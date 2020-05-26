@@ -138,15 +138,9 @@ class MyApp extends StatelessWidget {
               UserAccountsDrawerHeader(
                 accountEmail: Text('icaiolim@gmail.com'),
                 accountName: Text('Caio Lima'),
-                currentAccountPicture: GestureDetector(
-                  child: CircleAvatar(
-                    radius: 50.0,
-                    backgroundImage: AssetImage('assets/images/foto.jpg'),
-                  ),
-                  onTap: () {
-                    final snackBar = SnackBar(content: Text("Tap"));
-                    Scaffold.of(context).showSnackBar(snackBar);
-                  },
+                currentAccountPicture: CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: AssetImage('assets/images/foto.jpg'),
                 ),
               ),
               ListTile(
@@ -181,17 +175,31 @@ class MyApp extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Image.asset('assets/images/prate-salads.png'),
                     ),
-                    Text(
-                      'Gestão de pedidos eficiente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontFamily: 'Ubuntu',
-                      ),
-                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Cardapio App',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Ubuntu',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 36.0,
+                          ),
+                        ),
+                        Text(
+                          'Gestão de pedidos eficiente',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontFamily: 'Ubuntu',
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -315,7 +323,7 @@ class MyApp extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: 15.0,
+                height: 40.0,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
