@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'about.dart';
+import 'cadastro.dart';
 import 'home.dart';
 import 'login.dart';
 import 'food-table.dart';
@@ -19,6 +20,7 @@ void main() {
       '/home': (context) => MyApp(),
       '/about': (context) => About(),
       '/table': (context) => FoodTable(),
+      '/cadastro': (context) => TelaCadastro(),
     },
   ));
 }

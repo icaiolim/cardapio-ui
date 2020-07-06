@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
     listen = db.collection('mesas').snapshots().listen((res) {
       setState(() {
         mesas = res.documents
-            .map((doc) => Mesa.fromMap(doc.data, doc.documentID))
+            .map((doc) => Mesa.fromMap(doc.data, int.parse(doc.documentID)))
             .toList();
       });
     });
@@ -159,8 +159,10 @@ class _MyAppState extends State<MyApp> {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 onPressed: () => Navigator.pushNamed(
-                                    context, '/table',
-                                    arguments: int.parse(mesas[index].id)),
+                                  context,
+                                  '/table',
+                                  arguments: mesas[index].id,
+                                ),
                                 child: Column(
                                   children: <Widget>[
                                     Icon(Icons.restaurant),

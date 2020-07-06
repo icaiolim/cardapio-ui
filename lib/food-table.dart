@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:cardapio/model/mesa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'model/mesaPedido.dart';
 import 'model/pedido.dart';
 
 class FoodTable extends StatefulWidget {
@@ -14,6 +16,7 @@ class _FoodTableState extends State<FoodTable> {
   //Conexão Fluter+Firebase
   final db = Firestore.instance;
   final String colecao = "pedidos";
+  Mesa mesa;
 
   //Lista dinâmica para manipulação dos dados
   List<Pedido> lista = List();
@@ -25,6 +28,7 @@ class _FoodTableState extends State<FoodTable> {
   void initState() {
     super.initState();
 
+    // GET Pedidos
     //cancelar o listen, caso a coleção esteja vazia.
     listen?.cancel();
 
@@ -47,16 +51,18 @@ class _FoodTableState extends State<FoodTable> {
   @override
   Widget build(BuildContext context) {
     final int idMesa = ModalRoute.of(context).settings.arguments;
-    double total = 0;
 
+    if (mesa == null) getMesa(idMesa.toString());
+
+    // GET Lista Pedidos
     lista = lista.where((item) => item.mesa == idMesa).toList();
-
+    double total = 0;
     lista.forEach((item) => total += item.quantidade * item.valor);
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Mesa ' + idMesa.toString()),
+          title: Text(mesa == null ? 'Mesa' : mesa.nome),
           centerTitle: true,
         ),
 
@@ -83,7 +89,7 @@ class _FoodTableState extends State<FoodTable> {
                     width: 16.0,
                   ),
                   Text(
-                    'R\$' + total.toString(),
+                    'R\$ ' + total.toStringAsFixed(2),
                     style: TextStyle(
                       fontFamily: 'Ubuntu',
                       fontWeight: FontWeight.bold,
@@ -124,7 +130,9 @@ class _FoodTableState extends State<FoodTable> {
                                   children: <Widget>[
                                     Text(
                                         'Valor Unit.: R\$ ' +
-                                            lista[index].valor.toString(),
+                                            lista[index]
+                                                .valor
+                                                .toStringAsFixed(2),
                                         style: TextStyle(fontSize: 16)),
                                     SizedBox(
                                       width: 22.0,
@@ -142,7 +150,8 @@ class _FoodTableState extends State<FoodTable> {
                                     }),
                                 onTap: () {
                                   Navigator.pushNamed(context, '/cadastro',
-                                      arguments: lista[index].id);
+                                      arguments:
+                                          MesaPedido(mesa, lista[index]));
                                 },
                               );
                             });
@@ -156,10 +165,20 @@ class _FoodTableState extends State<FoodTable> {
           elevation: 0,
           child: Icon(Icons.add),
           onPressed: () {
-            Navigator.pushNamed(context, '/cadastro', arguments: null);
+            Navigator.pushNamed(context, '/cadastro',
+                arguments: MesaPedido(mesa, null));
           },
         ),
       ),
     );
+  }
+
+  void getMesa(String idMesa) async {
+    // Recuperar documento no Firestore
+    DocumentSnapshot doc = await db.collection('mesas').document(idMesa).get();
+
+    setState(() {
+      mesa = Mesa.map(doc.data);
+    });
   }
 }

@@ -1,5 +1,4 @@
 class Pedido {
-
   String _id;
   String _idCardapio;
   String _item;
@@ -7,7 +6,8 @@ class Pedido {
   int _quantidade;
   double _valor;
 
-  Pedido(this._id, this._idCardapio, this._item, this._mesa, this._quantidade, this._valor);
+  Pedido(this._id, this._idCardapio, this._item, this._mesa, this._quantidade,
+      this._valor);
 
   String get id => _id;
   String get idCardapio => _idCardapio;
@@ -16,8 +16,14 @@ class Pedido {
   int get quantidade => _quantidade;
   double get valor => _valor;
 
-  Pedido.map(dynamic obj){
-    this._id = obj['id'] ?? '';
+  set idCardapio(String idCardapio) => this._idCardapio = idCardapio;
+  set item(String item) => this._item = item;
+  set mesa(int mesa) => this._mesa = mesa;
+  set quantidade(int quantidade) => this._quantidade = quantidade;
+  set valor(double valor) => this._valor = valor;
+
+  Pedido.map(dynamic obj, String id) {
+    this._id = id;
     this._idCardapio = obj['idCardapio'];
     this._item = obj['item'];
     this._mesa = obj['mesa'];
@@ -26,9 +32,9 @@ class Pedido {
   }
 
   //Converter os dados para um Mapa
-  Map<String, dynamic> toMap(){
-    var map = Map<String,dynamic>();
-    if (_id != null){
+  Map<String, dynamic> toMap() {
+    var map = Map<String, dynamic>();
+    if (_id != null) {
       map["id"] = _id;
     }
     map["idCardapio"] = _idCardapio;
@@ -41,7 +47,7 @@ class Pedido {
   }
 
   //Converter um Mapa para o modelo de dados
-  Pedido.fromMap(Map<String,dynamic> map, String id){
+  Pedido.fromMap(Map<String, dynamic> map, String id) {
     //Atribuir id ao this._id, somente se id não for
     //nulo, caso contrário atribui '' (vazio).
     this._id = id ?? '';
@@ -51,5 +57,4 @@ class Pedido {
     this._quantidade = map["quantidade"];
     this._valor = map["valor"].toDouble();
   }
-
 }
