@@ -1,6 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatelessWidget {
+import 'model/usuario.dart';
+
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final db = Firestore.instance;
+  String outputUser = '';
+  TextEditingController txtUsuario = TextEditingController();
+  TextEditingController txtSenha = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,6 +48,7 @@ class Login extends StatelessWidget {
                 height: 20.0,
               ),
               TextField(
+                controller: txtUsuario,
                 decoration: InputDecoration(
                   labelText: 'Usuário',
                   border: OutlineInputBorder(),
@@ -44,14 +58,23 @@ class Login extends StatelessWidget {
                 height: 20.0,
               ),
               TextField(
+                controller: txtSenha,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Senha',
                   border: OutlineInputBorder(),
                 ),
               ),
+              SizedBox(height: 6.0),
+              Text(
+                outputUser,
+                style: TextStyle(
+                    color: Colors.red[800],
+                    fontSize: 18.0,
+                    fontFamily: 'Ubuntu'),
+              ),
               SizedBox(
-                height: 35.0,
+                height: 25.0,
               ),
               ButtonTheme(
                 minWidth: double.infinity,
@@ -70,27 +93,29 @@ class Login extends StatelessWidget {
                       fontFamily: 'Ubuntu',
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                  onPressed: () async {
+                    var user =
+                        await login(Usuario(txtUsuario.text, txtSenha.text));
+
+                    if (user != null) {
+                      Navigator.pushNamed(context, '/home');
+                    } else {
+                      setState(() {
+                        outputUser = 'Usuário ou senha incorretos';
+                      });
+                    }
                   },
                 ),
               ),
               SizedBox(
-                height: 20.0,
+                height: 26.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'Não tem uma conta? ',
-                    style: TextStyle(
-                      fontFamily: 'Ubuntu',
-                      fontSize: 18.0,
-                    ),
-                  ),
                   InkWell(
                     child: Text(
-                      'Cadastre-se',
+                      'Criar uma conta',
                       style: TextStyle(
                         fontFamily: 'Ubuntu',
                         fontWeight: FontWeight.bold,
@@ -98,7 +123,9 @@ class Login extends StatelessWidget {
                         fontSize: 20.0,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, '/create-user');
+                    },
                   ),
                 ],
               )
@@ -107,5 +134,25 @@ class Login extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<Usuario> login(Usuario input) async {
+    var docs = await db.collection('usuarios').getDocuments();
+    List<Usuario> usuarios = docs.documents
+        .map((doc) => Usuario.fromMap(doc.data, doc.documentID))
+        .toList();
+
+    try {
+      var user = usuarios.firstWhere((usuario) =>
+          usuario.email == input.email && usuario.senha == input.senha);
+
+      if (user == null) {
+        return null;
+      }
+
+      return user;
+    } catch (e) {
+      return null;
+    }
   }
 }
